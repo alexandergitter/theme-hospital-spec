@@ -750,6 +750,18 @@ The info is stored in a sequence of 4697 bytes.
                          |-------------------
     byte 3236 - 3237     | uint16 receptionist count
                          |-------------------
+    byte 3242 - 3243     | uint16 count of littered tiles
+                         |-------------------
+    byte 3244 - 3245     | uint16 position of last placed litter
+                         |-------------------
+    byte 3246            | uint8 rat hole count - max 40
+                         |-------------------
+    byte 3247 - 3366     | 40 x 3 * bytes - uint16 - rat hole position, uint8 - rat hole orientation
+                         |-------------------
+    byte 3367 - 3368     | uint16 rats killed
+                         |-------------------
+    byte 3369 - 3270     | uint16 rats created
+                         |-------------------
     byte 4600 - 4603     | uint32 AI `next move` tick
                          |-------------------
     byte 4604 - 4605     | uint32 AI rest of state machine starts here
