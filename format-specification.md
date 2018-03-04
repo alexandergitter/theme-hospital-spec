@@ -401,13 +401,17 @@ Levels/Maps in Theme Hospital have a size of 128 x 128 tiles.
                             |-----------------------------|
     byte 1                  | unknown                     |
                             |-----------------------------|
-    byte 2 - 9              | unknown                     |
+    byte 2 - 9              | 4 x int16 - spawn points for|
+                            | player 1 - single player    |
                             |-----------------------------|
-    byte 10 - 17            | unknown                     |
+    byte 10 - 17            | 4 x int16 - spawn points for|
+                            | player 2                    |
                             |-----------------------------|
-    byte 18 - 25            | unknown                     |
+    byte 18 - 25            | 4 x int16 - spawn points for|
+                            | player 3                    |
                             |-----------------------------|
-    byte 26 - 33            | unknown                     |
+    byte 26 - 33            | 4 x int16 - spawn points for|
+                            | player 4                    |
                             |-----------------------------|
     byte 34 - 131,105       | Map                         |
                             |-----------------------------|
@@ -449,7 +453,7 @@ Levels/Maps in Theme Hospital have a size of 128 x 128 tiles.
                             |-----------------------------|
     byte 163,892 - 163,895  | has something to do with how far we can scroll
                             |-----------------------------|
-    byte 163,896 - 163,947  | unknwon                     |
+    byte 163,896 - 163,947  | unknown                     |
                             '-----------------------------'
 
 * **number of players** – is the number of players that can simultaniously play this map (multiplayer); can take values from 1 to 4
@@ -585,7 +589,7 @@ There are 128 x 128 map-tiles, where each tile consists of 8 bytes.
                 |----------------------|
     byte 6      | extra                |
                 |----------------------|
-    byte 7      | read-only tile (?)   |
+    byte 7      | owner hospital       |
                 '----------------------'
 
 * **object info** – index into the Ingame Objects Info part
@@ -616,6 +620,7 @@ There are 128 x 128 map-tiles, where each tile consists of 8 bytes.
       * 0x6 urine (4542 in data/vfra-1.ani)
       * 0x7 rat hole NE (3742 in data/vfra-1.ani)
       * 0x8 rat hole NW
+* **owner hospital** – this is 2^hospital index - 0 being local hospital (for single player), 1,2,3 are AI/network player hospitals
 
 #### Ingame Objects Info
 
@@ -665,12 +670,88 @@ The info is stored in a sequence of 4697 bytes.
                          .-------------------
     byte 0 - arbitrary   | null-terminated string / hospital name
                          |-------------------
+    byte 42 - 42         | uint8 hospital type, 1 for local player, 2 for AI
+                         |-------------------
+    byte 45 - 48         | uint32 salary
+                         |-------------------
+    byte 49 - 53         | uint32 end salary from previous level
+                         |-------------------
     byte 53 - 56         | sint32 money
                          |-------------------
     byte 61 - 64         | sint32 loan
                          |-------------------
+    byte 65 - 68         | sint32 max loan - calculated as 1/3rd hospital value to max 100k
+                         |-------------------
+    byte 221 - 224       | uint32 research points available to distribute
+                         |-------------------
+    byte 225 - 412       | uint32 expertise research levels, 47 entries of 4 bytes, 0 index unused? 1-46 in *.SAM file
+                         |-------------------
+    byte 433 - 442       | sint16[5] - research distribution -1 complete, cure, diagnosis, drug, improvements, specialisation
+                         |-------------------
+    byte 443 - 446       | sint32 hospital value
+                         |-------------------
     byte 459 - 460       | uint16 % population
+                         |-------------------
+    byte 477 - 480       | uint32 emergency - payment per cured patient - emergency_control.Bonus
+                         |-------------------
+    byte 484             | uint8 emergency - disease - expertise index - emergency_control.Illness
+                         |-------------------
+    byte 485             | uint8 emergency - patient - cured count
+                         |-------------------
+    byte 486             | uint8 emergency - patient - total count
+                         |-------------------
+    byte 488             | uint8 emergency - pass percentage - emergency_control.PercWin
                          |-------------------
     byte 489 - 490       | uint16 people cured
                          |-------------------
     byte 491 - 492       | uint16 deaths
+                         |-------------------
+    byte 493 - 494       | uint16 visitor count
+                         |-------------------
+    byte 497 - 498       | uint16 hospital size (tile count)
+                         |-------------------
+    byte 507             | uint8 last vip visit score 0-14, 0 being best - scale of 0-14 for scores -5 to 10, scores < -5 or > 10 are possible
+                         |-------------------
+    byte 515 - 516       | uint16 - Epidemic - fine
+                         |-------------------
+    byte 517 - 518       | uint16 - Epidemic - total number of patients
+                         |-------------------
+    byte 527 - 528       | uint16 - days countdown left until disaster - initiated from gbv.DisasterLaunch
+                         |-------------------
+    byte 529 - 530?      | uint16? - saved radiator heat level
+                         |-------------------
+    byte 531             | uint8 - disaster type - 0 - none, 1 - boiler min heat, 2 - boiler max heat, 3 - vomit wave
+                         |-------------------
+    byte 532             | int8 - remaining duration of disaster
+                         |-------------------
+    byte 535 - 536       | uint16 - hospital policy - stop procedure - default 1000 = 100%
+                         |-------------------
+    byte 537 - 538       | uint16 - hospital policy - guess at cure percent - default = 90/90%
+                         |-------------------
+    byte 539 - 540       | uint16 - hospital policy - send home - default = 10/10%
+                         |-------------------
+    byte 541 - 542       | uint16 - hospital policy - staff fatigue level default = gbv.Tired
+                         |-------------------
+    byte 543             | uint8 - hospital policy - staff can leave rooms
+                         |-------------------
+    byte 3198 - 3121     | uint32 hospital reputation = 500 * positive / negative 
+                         |-------------------
+    byte 3122 - 3125     | uint32 reputation positive factor
+                         |-------------------
+    byte 3126 - 3129     | uint32 reputation negative factor
+                         |-------------------
+    byte 3228 - 3229     | uint16 staff count - sum of the following values
+                         |-------------------
+    byte 3230 - 3231     | uint16 nurse count
+                         |-------------------
+    byte 3232 - 3233     | uint16 doctor count
+                         |-------------------
+    byte 3234 - 3235     | uint16 handyman count
+                         |-------------------
+    byte 3236 - 3237     | uint16 receptionist count
+                         |-------------------
+    byte 4600 - 4603     | uint32 AI `next move` tick
+                         |-------------------
+    byte 4604 - 4605     | uint32 AI rest of state machine starts here
+                         |-------------------
+    byte 4677 - 4677     | uint8 Computer player index from *.SAM file
