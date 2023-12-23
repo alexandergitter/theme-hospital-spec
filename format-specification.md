@@ -100,27 +100,23 @@ To render a frame, you would typically do something linke this:
 
 #### Start
 
-This file lists the first frame for each animation sequence in TH.
+This file lists the first frame for each animation sequence in TH. Each entry is 8 bytes long.
 
                         .-------------------------.
-    byte 0 - 1          | Startframe, Animation 0 |
+    byte 0 - 4          | startframe, Animation 0 |
                         |-------------------------|
-    byte 2 - 3          | unknown                 |
+    byte 5 - 7          | otheranim,  Animation 0 |
                         |-------------------------|
-    byte 4 - 5          | Startframe, Animation 1 |
+    byte 8 - 11         | startframe, Animation 1 |
                         |-------------------------|
-    byte 6 - 7          | unknown                 |
+    byte 12 - 15        | otheranim,  Animation 1 |
          .              |-------------------------|
          .              |          ...            |
-         .              |-------------------------|
-    byte 4n - (4n + 1)  | Startframe, Animation n |
-                        |-------------------------|
-                        | unknown                 |
-                        |-------------------------|
-                        |          ...            |
-                        '-------------------------'
+         .              '-------------------------'
 
-* **startframe** – uint16; an index of an entry in the framefile. entries in the framefile are 10 bytes in size, so absolute position = startframe * 10
+* **startframe** – uint32; an index of an entry in the framefile. Entries in the framefile are 10 bytes in size, so absolute position = startframe * 10
+* **otheranim** - uint32; an index of an entry in the startfile. Entries in the startfile are 8 bytes long, so absolute position = otheranim * 8
+Value 0 seems used to denote there is no other animation.
 
 #### Frame
 
